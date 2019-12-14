@@ -8,7 +8,7 @@ class WebCrawlTest {
 
     @Test
     void checkURLisWellFormed(){
-        String[] args = {"http://wiprodigital.com"};
+        String[] args = {"http://wiprodigital.com", "false"};
         WebCrawl.main(args);
     }
 }

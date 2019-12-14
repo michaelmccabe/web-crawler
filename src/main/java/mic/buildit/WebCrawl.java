@@ -1,22 +1,28 @@
 package mic.buildit;
 
+import mic.buildit.exceptions.WebCrawlerException;
+import org.apache.commons.validator.UrlValidator;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 
 public class WebCrawl {
 
     public static void main(String[] args) {
+        boolean saveFile=true;
         if(args.length>0){
+            if(args.length>1){
+                saveFile = !args[1].equalsIgnoreCase("false");
+            }
 
             String url = args[0];
             try {
                 System.out.println("web crawl this domain: "  + getDomainName(url));
-
-                WebCrawler webCrawler = new WebCrawler(url);
+                WebCrawler webCrawler = new WebCrawler(url, saveFile);
                 webCrawler.getPageLinks(url);
 
-            } catch (Exception e) {
-                System.out.println(args[0] +" not a valid URL");
+            } catch (WebCrawlerException e) {
+                System.out.println(args[0] + ": " +e.getMessage());
             }
         }
         else{
@@ -24,12 +30,20 @@ public class WebCrawl {
         }
     }
 
-    public static String getDomainName(String url) {
+    public static String getDomainName(String url) throws WebCrawlerException {
+
+        UrlValidator urlValidator = new UrlValidator();
+
+        if(!urlValidator.isValid(url)){
+            throw new WebCrawlerException("URL is not valid");
+        }
+
         URI uri = null;
         try {
             uri = new URI(url);
+
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            throw new WebCrawlerException(e.getMessage());
         }
         String domain = uri.getHost();
 
